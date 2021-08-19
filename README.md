@@ -19,5 +19,5 @@ Max score (NM): 2956474
 Max score (HDHRDTFL): 4119190
 ```
 
-[npm]: https://img.shields.io/npm/v/bparser-js
+[npm]: https://img.shields.io/npm/v/bparser-js?
 [npm-url]: https://www.npmjs.com/package/bparser-js

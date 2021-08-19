@@ -70,7 +70,7 @@ class Beatmap {
     creator = "";
     version = "";
     source = "";
-    tags = "";
+    tags = [];
     beatmapId = 0;
     beatmapsetId = -1;
     //#endregion

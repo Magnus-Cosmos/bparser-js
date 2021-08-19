@@ -4,20 +4,65 @@ const enums = require("./enums");
 const utils = require("./utils");
 
 class BeatmapParser extends models.Beatmap {
-    constructor(filename) {
+    /**
+     * Create a beatmap parser
+     * @param {string} file - The .osu file or data to parse, defaults to `null`. If not specified nothing will be parsed
+     * @param {number} mods - Integer value of the mods, defaults to `0` (NoMod)
+     * @param {boolean} raw_data - Whether the parameter `file` is a filename or raw data, defaults to `false`
+     */
+    constructor(file = null, mods = 0, raw_data = false) {
         super();
-        this.filename = filename;
         this.parsed = false;
-        fs.readFile(filename, "utf8", (err, data) => {
-            const lines = data.split(/\r?\n/);
-            this.processHeaders(lines);
-            this._parse(lines);
-            this.parseObjects(1112);
-            console.log(this.maxScore);
-        });
+        if (file != null) {
+            if (raw_data)
+                this.parseData(file, mods);
+            else
+                this.parseFile(file, mods);
+        }
     }
 
-    processHeaders(lines) {
+    /**
+     * Parse beatmap file
+     * @param {string} filename - Path of .osu file
+     * @param {number} mods - Integer value of the mods, defaults to `0` (NoMod)
+     */
+    parseFile(filename, mods = 0) {
+        const data = fs.readFileSync(filename, "utf8");
+        const lines = data.split(/\r?\n/);
+        this._processHeaders(lines);
+        this._parse(lines);
+        this._parseObjects(mods);
+    }
+
+    /**
+     * Parse beatmap data
+     * @param {string} [data] String data of .osu file
+     * @param {number} [mods=0] Integer value of the mods, defaults to `0` (NoMod)
+     */
+    parseData(data, mods = 0) {
+        const lines = data.split(/\r?\n/);
+        this._processHeaders(lines);
+        this._parse(lines);
+        this._parseObjects(mods);
+    }
+
+    /**
+     * Max score of beatmap
+     * @param {number} [mods=0] Integer value of mods, defaults to `0` (NoMod)
+     */
+    getMaxScore(mods = 0) {
+        if (!this.parsed) {
+            console.log("Beatmap has not been parsed yet");
+            return;
+        }
+        if (this.mods == mods)
+            return this.maxScore;
+        this._parseObjects(mods);
+
+        return this.maxScore;
+    }
+
+    _processHeaders(lines) {
         let arIsOd = false;
         let currentSection = enums.FileSection.UNKNOWN;
         let firstTime = -1;
@@ -242,7 +287,7 @@ class BeatmapParser extends models.Beatmap {
         }
     }
 
-    parseObjects(mods) {
+    _parseObjects(mods) {
         this.maxCombo = 0;
         this.maxScore = 0;
         let scoreMult = this._diffPpyStars() * utils.modsMultiplier(mods);
@@ -276,9 +321,11 @@ class BeatmapParser extends models.Beatmap {
         }
         this.maxScore = Math.min(this.maxScore, 2147483647);
         this.parsed = true;
+        this.mods = mods;
     }
 
     _parseSpinner(ho, mods) {
+        ho.bonusPoints = 0;
         let rotRatio = utils.diffRange(this.od, 3, 5, 7.5, mods);
         let rotReq = Math.trunc(ho.length / 1000 * rotRatio);
         let length = ho.length;
@@ -384,3 +431,5 @@ class BeatmapParser extends models.Beatmap {
         return Math.round((Math.fround(this.hp) + Math.fround(this.od) + Math.fround(this.cs) + Math.fround(objFactor)) / 38 * 5);
     }
 }
+
+module.exports = { BeatmapParser }

@@ -1,0 +1,19 @@
+{
+  "name": "bparser-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "parser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Magnus-Cosmos/bparser-js.git"
+  },
+  "author": "Magnus-Cosmos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Magnus-Cosmos/bparser-js/issues"
+  },
+  "homepage": "https://github.com/Magnus-Cosmos/bparser-js#readme"
+}

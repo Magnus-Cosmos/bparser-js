@@ -335,8 +335,9 @@ class BeatmapParser extends models.Beatmap {
             length -= firstFrame;
         let rot1 = (0.05 / maxAccel * 0.05 / 2) / Math.PI;
         let rot2 = ((length - 0.05 / maxAccel) * 0.05) / Math.PI;
-        let rot3 = 0.05 / (2 * Math.PI);
+        let rot3 = 0.05 / (2 * Math.PI) - Math.pow(length, 1.89) / 4000000000;
         let rot = Math.trunc(rot1 + rot2 + rot3);
+        console.log(rot1 + rot2 + rot3)
         for (let i = 1; i <= rot; i++) {
             if (i > rotReq + 3 && (i - (rotReq + 3)) % 2 == 0)
                 ho.bonusPoints += 1100;

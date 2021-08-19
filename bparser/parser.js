@@ -384,5 +384,3 @@ class BeatmapParser extends models.Beatmap {
         return Math.round((Math.fround(this.hp) + Math.fround(this.od) + Math.fround(this.cs) + Math.fround(objFactor)) / 38 * 5);
     }
 }
-
-var test = new BeatmapParser("2323645.osu");

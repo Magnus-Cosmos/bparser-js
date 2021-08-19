@@ -8,7 +8,7 @@ A minimal beatmap parse for **Node.js** that parses .osu files and calculates ma
 ```javascript
 const bparser = require("bparser-js");
 
-var beatmap = bparser.BeatmapParser("path/Kuba Oms - My Love (W h i t e) [Normal].osu");
+var beatmap = new bparser.BeatmapParser("path/Kuba Oms - My Love (W h i t e) [Normal].osu");
 console.log(`Max score (NM): ${beatmap.maxScore}`);
 console.log(`Max score (HDHRDTFL): ${beatmap.getMaxScore(1112)}`);
 ```

@@ -1,4 +1,7 @@
 # bparser-js
+============
+[![NPM Package][npm]][https://www.npmjs.com/package/bparser-js]
+
 A minimal beatmap parse for **Node.js** that parses .osu files and calculates max score.
 
 ## Usage

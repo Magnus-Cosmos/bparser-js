@@ -332,12 +332,46 @@ class BeatmapParser extends models.Beatmap {
         let firstFrame = Math.floor(utils.removeModsFromTime(1000 / 60, mods));
         let maxAccel = utils.applyModsToTime(0.00008 + Math.max(0, (5000 - length) / 1000 / 2000), mods);
         if (!(enums.Mod.SO & mods))
-            length -= firstFrame;
-        let rot1 = (0.05 / maxAccel * 0.05 / 2) / Math.PI;
-        let rot2 = ((length - 0.05 / maxAccel) * 0.05) / Math.PI;
-        let rot3 = 0.05 / (2 * Math.PI) - Math.pow(length, 1.89) / 4000000000;
-        let rot = Math.trunc(rot1 + rot2 + rot3);
-        console.log(rot1 + rot2 + rot3)
+            length = Math.max(0, length - firstFrame);
+
+        let rot1 = 0.0;
+        if (0.05 / maxAccel <= length)
+            rot1 = (0.05 / maxAccel * 0.05 / 2) / Math.PI;
+        else
+            rot1 = (length * 0.05 / 2) / Math.PI;   
+        let rot2 = (Math.max(0, (length - 0.05 / maxAccel)) * 0.05) / Math.PI;
+
+        let adj = 0.0;
+        // We want to do riemann sum (with 32-bit floats), but looping through every ms of the spinner is rather inefficient
+        // Instead we take the integral/area (`rot1` + `rot2`) and add a small adjustment
+        // https://www.desmos.com/calculator/q2fmcg2wqy
+        // Using step-wise functions
+        // DT: https://www.desmos.com/calculator/c4fj2mbx9k
+        if (ho.length < 25)
+            adj = 0.0;
+        else if (ho.length < 54)
+            adj = -0.000270059419975 * Math.pow(ho.length, 2) + 0.0211619792196 * ho.length - 0.360204188548;
+        else if (ho.length < 550)
+            adj = 7.08877768273e-8 * ho.length - 0.00792123896377;
+        else if (ho.length < 1039)
+            adj = -3.87996955927e-7 * ho.length - 0.00766882330492;
+        else if (ho.length < 4300)
+            adj = 5.56455532781e-7 * ho.length - 0.00864999032506;
+        else if (ho.length < 5003)
+            adj = -1.52204906849e-157 * Math.pow(ho.length, 41.3873070645) + 1.55461382298e-8 * Math.pow(ho.length, 1.36603917014) - 0.00768603737329;
+        else if (ho.length < 16579)
+            adj = 0.000000576271509962 * ho.length - 0.00900373898631;
+        else if (ho.length < 64789)
+            adj = -0.0000146814720605 * ho.length + 0.243958571556;
+        else if (ho.length < 258373)
+            adj = 0.0000463528165568 * ho.length - 3.71039008873;
+        else if (ho.length < 512573)
+            adj = -0.00019778694081 * ho.length + 59.3687754661;
+        else
+            adj = 0.00029049430919 * ho.length - 190.91100969;
+
+        let rot = Math.trunc(Math.max(0, rot1 + rot2 - adj));
+        console.log(rot1 + rot2 - adj);
         for (let i = 1; i <= rot; i++) {
             if (i > rotReq + 3 && (i - (rotReq + 3)) % 2 == 0)
                 ho.bonusPoints += 1100;

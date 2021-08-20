@@ -63,7 +63,7 @@ class BeatmapParser extends models.Beatmap {
     }
 
     _processHeaders(lines) {
-        let arIsOd = false;
+        let arIsOd = true;
         let currentSection = enums.FileSection.UNKNOWN;
         let firstTime = -1;
         let lastTime = -1;
@@ -371,7 +371,6 @@ class BeatmapParser extends models.Beatmap {
             adj = 0.00029049430919 * ho.length - 190.91100969;
 
         let rot = Math.trunc(Math.max(0, rot1 + rot2 - adj));
-        console.log(rot1 + rot2 - adj);
         for (let i = 1; i <= rot; i++) {
             if (i > rotReq + 3 && (i - (rotReq + 3)) % 2 == 0)
                 ho.bonusPoints += 1100;
